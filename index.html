@@ -1,0 +1,199 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!--link leaflet-->>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+            integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+            crossorigin="" />
+        <!-- W3 CSS template -->
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin="">
+        </script>
+    <style>
+        #mapid{
+            height: 800px;
+        }
+body {
+  background-color: #FFF5ED;
+}
+    </style>
+<title>Tourist map</title>
+<h><b style="color:#92CEA8;">  5 สถานที่ท่องเที่ยวประเทศญี่ปุ่น <b></h>
+  <p style="color:#92CEA8;"><strong><em> by Anuphon Pintakham </em></strong></p>
+    </head>
+    <body style="color : #695A5B ;  background-position: center:
+        <div class="w3-row">
+            <div id="mapid" class="w3-half"></div>
+         <div id="content" class="w3-half">
+                <table class="w3-table w3-striped">
+                    <tr>
+                        <th>ชื่อแหล่งท่องเที่ยว</th>
+                        <th>ประเภท</th>
+                        <th>ระดับ</th>
+                    </tr>
+                    <tr>
+                        <td>น้ำตก A</td>
+                        <td>ธรรมชาติ</td>
+                        <td>A</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+     <!-- เรียกแผนที่ -->
+<script>
+// เรียกแผนที่
+var map = L.map("mapid").setView([36.80203405187172, 138.6873748992696],5);
+// base map1
+var osm = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}')
+.addTo(map);
+// based map
+var gsat = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}")
+.addTo(map);
+// group layers 1+2
+var baseMaps ={
+    //layername:Variables
+    OSM:osm,
+    GoogleSat:gsat,
+};
+// add data
+var tourpoint = {
+type: "FeatureCollection",
+name: "tour_plk",
+crs: {
+type: "name",
+properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" },
+},
+features: [
+{
+type: "Feature",
+properties: {
+Name: "โตเกียวดิสนีย์แลนด์ ",
+Type: "สวนสนุก",
+FID_1: 1358.0,
+level: "A",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[139.88037283948717,35.633079500784554 ]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "ภูเขาไฟฟูจิ",
+Type: "ท่องเที่ยวธรรมชาติ",
+FID_1: 1357.0,
+level: "A",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[138.727492102139,35.361639636429]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "วัดคิโยะมิซุ",
+Type: "ศาสนา",
+FID_1: 1362.0,
+level: "A",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[135.7823121024741,34.98831471948947]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "Sendai Umino-Mori Aquarium",
+Type: "พิพิธภัณฑ์สัตว์น้ำเซ็นได",
+FID_1: 1364.0,
+level: "A",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[140.99964988855467,38.278886160628424]],
+},
+},
+{
+type: "Feature",
+properties: {
+Name: "สวนชิโรอิโคอิบิโตะ",
+Type: "สวน",
+FID_1: 1365.0,
+level: "C",
+},
+geometry: {
+type: "MultiPoint",
+coordinates: [[141.3674088911976,43.10743429284792]],
+},
+},
+],
+};
+
+//add marker and popup
+
+var tourLayer = L.geoJSON(tourpoint, {
+pointToLayer: function (feature, latlng) {
+return L.marker(latlng).bindPopup(feature.properties.Name);
+},
+onEachFeature: function (feature, layer) {
+layer.on("mouseover", function () {
+document
+.getElementById(feature.properties.FID_1)
+.classList.add("w3-red");
+});
+
+
+
+layer.on("mouseout", function () {
+document
+.getElementById(feature.properties.FID_1)
+.classList.remove("w3-red");
+});
+},
+}).addTo(map);
+///link table with popup and marker
+var cont = "";
+cont += "<table class='w3-table w3-striped'>";
+cont += "<tr>";
+cont += "<th>ชื่อแหล่งท่องเที่ยว</th>";
+cont += "<th>ประเภท</th>";
+cont += "<th>ระดับ</th>";
+cont += "</tr>";
+for (let i in tourpoint.features) {
+cont += "<tr id=" + tourpoint.features[i].properties.FID_1 + ">";
+cont += "<td>" + tourpoint.features[i].properties.Name + "</td>";
+cont += "<td>" + tourpoint.features[i].properties.Type + "</td>";
+cont += "<td>" + tourpoint.features[i].properties.level + "</td>";
+cont += "</tr>";
+}
+cont += "</table>";
+console.log(cont);
+document.getElementById("content").innerHTML = cont;
+
+
+
+
+
+//group point+polygon layer
+var overlay = {
+    สถานที่ท่องเที่ยว:tourLayer,
+
+};
+
+
+//Create layer control
+L.control.layers(baseMaps,overlay).addTo(map);
+
+
+</script>
+
+
+    </body>
+</html>
